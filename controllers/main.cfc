@@ -45,8 +45,53 @@ component accessors="true" {
         rc.genders = addressbookService.getGender();
     }
 
-    public void function addContact(struct rc){
+    public void function validateFormAndAddOrEditContact(struct rc){
+        local.errors = [];
 
+        //VALIDATE TITLE
+        local.titleArray = [];
+        local.titleValues = addressbookService.getTitle();
+        for(title in local.titleValues){
+            arrayAppend(local.titleArray, title.id);
+        }
+        if(structKeyExists(rc, 'title')){
+            if(!arrayContains(local.titleArray, rc.title)){
+                arrayAppend(local.errors, '*Invalid title');
+            }
+        }
+
+        //VALIDATE FIRSTNAME
+        if(len(trim(rc.firstname)) == 0){
+            arrayAppend(local.errors, '*Firstname required');
+        }
+        else if(!reFindNoCase("^[A-Za-z]+(\s[A-Za-z]+)?$", arguments.firstname)){
+            arrayAppend(local.errors, '*Invalid firstname');
+        }
+
+        //VALIDATE LASTNAME
+        if(len(trim(rc.lastname)) == 0){
+            arrayAppend(local.errors, '*Lastname required');
+        }
+        else if(!reFindNoCase("^[A-Za-z]+(\s[A-Za-z]+)?$", arguments.lastname)){
+            arrayAppend(local.errors, '*Invalid lastname');
+        }
+
+        // VALIDATE GENDER
+        local.genderArray = [];
+        local.genderValues = addressbookService.getGender();
+        for(gender in local.genderValues){
+            arrayAppend(local.genderArray,gender.id);
+        }
+        if(structKeyExists(rc, 'gender')){
+            if(!arrayContains(local.genderArray, rc.gender)){
+                arrayAppend(local.errors, '*Invalid gender');
+            }
+        }
+
+        // VALIDATE DATE OF BIRTH
+        if(len(rc.dob) == 0){
+            arrayAppend(local.errors, '*Please enter date of birth');
+        }
         // IMAGE
         local.uploadedImage = fileUpload(
             destination = application.imageSavePath,
@@ -72,20 +117,3 @@ component accessors="true" {
         variables.fw.renderData().data( local.addContact ).type("json");
     }
 }
-
-
-        //VALIDATE FIRSTNAME
-        // if(len(trim(rc.firstname)) == 0){
-        //     arrayAppend(rc.errors, '*Firstname required');
-        // }
-        // else if(!reFindNoCase("^[A-Za-z]+(\s[A-Za-z]+)?$", arguments.firstname)){
-        //     arrayAppend(rc.errors, '*Invalid firstname');
-        // }
-
-        //VALIDATE LASTNAME
-        // if(len(trim(rc.lastname)) == 0){
-        //     arrayAppend(rc.errors, '*Lastname required');
-        // }
-        // else if(!reFindNoCase("^[A-Za-z]+(\s[A-Za-z]+)?$", arguments.lastname)){
-        //     arrayAppend(rc.errors, '*Invalid lastname');
-        // }
