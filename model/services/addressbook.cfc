@@ -111,7 +111,6 @@
                     )
                 </cfquery>
                 <cfset local.newId= local.contactAdd.GENERATEDKEY>
-                <cfdump  var="#local.newId#" abort>
                 <cfset local.hobbyArr=ListToArray(arguments.hobbies,",")>
                 <cfloop array="#local.hobbyArr#" index="hobby_id">
                     <cfquery datasource="coldfusion" result="local.contactHobbies">
@@ -125,8 +124,8 @@
                         )
                     </cfquery>
                 </cfloop>
-                <cfset local.result="Success">
-           <!--- <cfelse>	
+                
+    <!--- <cfelse>	
                 <cfset local.decryptedId=decrypt(arguments.id,application.encryptionKey,"AES","Hex")>
                 <cfset local.hobbyArr=ListToArray(arguments.hobbies,",")>
         

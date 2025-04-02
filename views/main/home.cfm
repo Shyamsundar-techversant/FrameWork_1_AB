@@ -132,9 +132,8 @@
                                                                 )
                                                 >--->
                                                 <tr>
-        
                                                     <td>
-                                                        <img src="" alt="logo" width="30" height="30"
+                                                        <img src="/uploadImg/#rc.contactsDetails.imagePath#" alt="logo" width="30" height="30"
                                                         >
                                                     </td>
                                                     <td>#rc.contactsDetails.firstName &rc.contactsDetails.lastName#</td>
