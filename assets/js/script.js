@@ -64,9 +64,8 @@
 		formData.append('pincode', contPincode.val());
 		formData.append('hobbies',contHobby.val());
 		formData.append('public',publicData);
-		console.log(contEmail.val());
 		$.ajax({
-			url: '/Frame_work_1_Address_Book/index.cfm?action=main.addContact',
+			url: '/Frame_work_1_Address_Book/index.cfm?action=main.validateFormAndAddOrEditContact',
 			type:'POST',
 			data:formData,
 			processData:false,
