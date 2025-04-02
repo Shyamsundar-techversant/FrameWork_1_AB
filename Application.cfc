@@ -5,11 +5,13 @@ component extends="framework.one" {
 
     public void function setupApplication() {
         // application.addressbookService = new model.services.hello();
+        
     }
 
     public function onApplicationStart() {
         var result =  super.onApplicationStart();
         // application.helloService = new model.services.hello();
+        application.imageSavePath = "C:\ColdFusion2021\cfusion\wwwroot\uploadImg"
         return true;
     }
 

@@ -1,17 +1,11 @@
-<cfif structKeyExists(rc, 'errors')>
-    <cfif arrayLen(rc.errors)>
-        <cfdump  var="#rc.errors#">
-    </cfif>
-</cfif>
-
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Address Book</title>
-        <link rel = "stylesheet" href="/Frame_work_1/assets/css/style.css"/>
-        <link rel = "stylesheet" href="/Frame_work_1/assets/css/bootstrap.css"/>
+        <link rel = "stylesheet" href="/Frame_work_1_Address_Book/assets/css/style.css"/>
+        <link rel = "stylesheet" href="/Frame_work_1_Address_Book/assets/css/bootstrap.css"/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" 
             integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" 
             crossorigin="anonymous" 
@@ -45,9 +39,7 @@
                                     <div class="contact-icon"><i class="fa-solid fa-address-book"></i></div>
                                 </div>
                                 <div class="reg-form pb-3">
-                                    <cfoutput>
-                                    <form name="registration-form" action="#buildURL('main.home')#" method="post" class="login-form">
-                                    </cfoutput>
+                                    <form name="registration-form" method="post" class="login-form">
                                         <div class="form-head">
                                             <h2 id="formHead">LogIn</h2>
                                         </div>
@@ -63,8 +55,8 @@
                                             <button type="submit" class="sign" id="logIn" name="submit">LogIn</button>
                                         </div>
                                         <div class="error ps-3">
-                                            <cfif structKeyExists(variables,"logResult")>
-                                                <cfoutput>#variables.logResult#</cfoutput>
+                                            <cfif structKeyExists(rc,"errors")>
+                                                <cfdump  var="#rc.errors#">
                                             </cfif> 
                                         </div>
                                     </form>
@@ -75,8 +67,8 @@
                 </div>
             </section>
         </section>
-        <script src = "/Frame_work_1/assets/js/bootstrap.bundle.js"></script>
-        <script src = "/Frame_work_1/assets/js/jquery-3.7.1.min.js"></script>
-        <script src="/Frame_work_1/assets/js/script.js"></script>
+        <script src = "/Frame_work_1_Address_Book/assets/js/bootstrap.bundle.js"></script>
+        <script src = "/Frame_work_1_Address_Book/assets/js/jquery-3.7.1.min.js"></script>
+        <script src="/Frame_work_1_Address_Book/assets/js/script.js"></script>
     </body>
 </html>

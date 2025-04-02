@@ -1,4 +1,4 @@
-$(document).ready(function(){
+	$(document).ready(function(){
 	if(window.history.replaceState){
 		window.history.replaceState(null,null,window.location.href);
 	}
@@ -26,9 +26,9 @@ $(document).ready(function(){
 		pincode=$('#contact-pincode'),
 		email=$('#contact-email'),
 		phone=$('#contact-phone');
-	
+
 	//ADD
-   	$('#create-cont').on('click',function(){
+	$('#create-cont').on('click',function(){
 		setTimeout(()=>{
 			$('#contacts-form').trigger('reset');
 		},2000);
@@ -42,23 +42,21 @@ $(document).ready(function(){
 		contThumb.hide();
 
 	});
-	
-	 /* $('#add-cont').on('click',function(event){
+
+	$('#add-cont').on('click',function(event){
 		event.preventDefault();
 		var fileInput = $('#upload-img')[0];
-		var file=fileInput.files[0];
-		let publicData=publicContact.checked? 1:0 ; 
+		var file = fileInput.files[0];
+		let publicData = publicContact.checked? 1:0 ; 
 		let formData = new FormData();
 		formData.append('title', contTitle.val());
 		formData.append('firstname', contFirstname.val());
 		formData.append('lastname', contLastname.val());
 		formData.append('gender', contGender.val());
 		formData.append('dob', contDob.val());
-
 		if(file){
 			formData.append('file', file);
 		}
-
 		formData.append('email', contEmail.val());
 		formData.append('phone', contPhone.val());
 		formData.append('address', contAddress.val());
@@ -66,8 +64,9 @@ $(document).ready(function(){
 		formData.append('pincode', contPincode.val());
 		formData.append('hobbies',contHobby.val());
 		formData.append('public',publicData);
+		console.log(contEmail.val());
 		$.ajax({
-			url:'Components/main.cfc?method=validateFormAndCreateOrUpdateUser',
+			url: '/Frame_work_1_Address_Book/index.cfm?action=main.addContact',
 			type:'POST',
 			data:formData,
 			processData:false,
@@ -81,16 +80,15 @@ $(document).ready(function(){
 					location.reload();
 				}
 				else{
-					addError(data);
+					// addError(data);
 				}
-				
 			},
 			error:function(){
 				console.log("Request Failed");
 			}
 		});
 	});
-	
+
 	//Error Data
 
 	function addError(data){
@@ -104,11 +102,10 @@ $(document).ready(function(){
 		});
 
 	}
-	*/
 
 	//VIEW
 		
-    	$('.contact-view-btn').on('click', function() {
+		$('.contact-view-btn').on('click', function() {
 		// Get the contact ID from data-id attribute
 		contactId = $(this).data('id');
 		$.ajax({
@@ -120,7 +117,7 @@ $(document).ready(function(){
 			success:function(response){
 				console.log(response) ;
 				const data=JSON.parse(response);
-				 
+				
 				const hobbies=	data.hobby_name.split(",");
 				let date = new Date(data.dob);
 				let formattedDate = date.toISOString().split('T')[0];
@@ -203,24 +200,24 @@ $(document).ready(function(){
 
 	});
 	$('#upload-img').on('change', function(event) {
-    		const file = event.target.files[0];
+			const file = event.target.files[0];
 
-    		if (file) {
-        			const reader = new FileReader();
-        			reader.onload = function(e) {
-            							const imgElement = document.createElement('img');
-            							imgElement.src = e.target.result;
-            							imgElement.alt = 'Uploaded Image';
-            							imgElement.style.width = '65px';
-            							imgElement.style.height = '65px';
+			if (file) {
+					const reader = new FileReader();
+					reader.onload = function(e) {
+										const imgElement = document.createElement('img');
+										imgElement.src = e.target.result;
+										imgElement.alt = 'Uploaded Image';
+										imgElement.style.width = '65px';
+										imgElement.style.height = '65px';
 
-            							const contactDiv = document.getElementById('contactThumb');
-            							contactDiv.innerHTML = ''; 
-            							contactDiv.appendChild(imgElement); 
-        					};	
+										const contactDiv = document.getElementById('contactThumb');
+										contactDiv.innerHTML = ''; 
+										contactDiv.appendChild(imgElement); 
+							};	
 
-        			reader.readAsDataURL(file); 
-    			}
+					reader.readAsDataURL(file); 
+				}
 	});
 
 	/*
@@ -274,7 +271,7 @@ $(document).ready(function(){
 	*/
 
 	//DELETE CONTACT
-    	$('.delete-contact-details').on('click', function() {		
+		$('.delete-contact-details').on('click', function() {		
 		// Get the contact ID from data-id attribute
 		contactId = $(this).data('id');
 		$('.modal-backdrop').show();
@@ -308,7 +305,7 @@ $(document).ready(function(){
 
 	});	
 
-	
 
-});
+
+	});
 

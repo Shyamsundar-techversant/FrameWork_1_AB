@@ -6,7 +6,7 @@ component {
         return hashedPassword ;
     }
 
-    //Check user exist
+    //CHECK USER EXISTS
     public query function userLogIn(required string userName) {
         try {
             local.userLog = queryExecute(
