@@ -1,4 +1,4 @@
-	$(document).ready(function(){
+$(document).ready(function(){
 	if(window.history.replaceState){
 		window.history.replaceState(null,null,window.location.href);
 	}
@@ -57,6 +57,9 @@
 		if(file){
 			formData.append('file', file);
 		}
+		else{
+			alert("phot is required");
+		}
 		formData.append('email', contEmail.val());
 		formData.append('phone', contPhone.val());
 		formData.append('address', contAddress.val());
@@ -65,21 +68,23 @@
 		formData.append('hobbies',contHobby.val());
 		formData.append('public',publicData);
 		$.ajax({
-			url: '/Frame_work_1_Address_Book/index.cfm?action=main.validateFormAndAddOrEditContact',
+			url: '/Frame_work_1_Address_Book/index.cfm?action=addressbook.validateFormAndAddOrEditContact',
 			type:'POST',
 			data:formData,
 			processData:false,
 			contentType:false,
 			success:function(response){
 				console.log(response);
-				let data = JSON.parse(response);
-				console.log(data);	
-				if(data === "Success"){
+				if(response === "Success"){
 					$('#contacts-form').closest('.modal').modal('hide');
 					location.reload();
 				}
 				else{
-					// addError(data);
+					addError(response);					
+                    let errorDiv = document.getElementById("contact-form-errors");
+                    if (errorDiv) {
+                        errorDiv.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }
 				}
 			},
 			error:function(){
@@ -102,32 +107,29 @@
 
 	}
 
-	//VIEW
-		
+	//VIEW	
 		$('.contact-view-btn').on('click', function() {
 		// Get the contact ID from data-id attribute
 		contactId = $(this).data('id');
 		$.ajax({
-			url:'Components/main.cfc?method=getData',
+			url:'/Frame_work_1_Address_Book/index.cfm?action=addressbook.getContactDetails',
 			type:'POST',
 			data:{
 				id:contactId
 			},
 			success:function(response){
 				console.log(response) ;
-				const data=JSON.parse(response);
-				
-				const hobbies=	data.hobby_name.split(",");
-				let date = new Date(data.dob);
+				const hobbies =	response.hobby_name.split(",");
+				let date = new Date(response.dob);
 				let formattedDate = date.toISOString().split('T')[0];
-				$('#profile-picture').attr('src',`./Uploads/${data.imagePath}`);
-				fullName.text(`${data.titles} ${data.firstName}${data.lastName}`);
-				gender.text(`${data.gender_values}`);
+				$('#profile-picture').attr('src',`/uploadImg/${response.imagePath}`);
+				fullName.text(`${response.titles} ${response.firstName}${response.lastName}`);
+				gender.text(`${response.gender_values}`);
 				dob.text(formattedDate);
-				address.text(`${data.address}`);
-				pincode.text(`${data.pincode}`);
-				email.text(`${data.email}`);
-				phone.text(`${data.phone}`);	
+				address.text(`${response.address}`);
+				pincode.text(`${response.pincode}`);
+				email.text(`${response.email}`);
+				phone.text(`${response.phone}`);	
 				$('#user-hobbies').text(hobbies); 	
 			},
 			error:function(){
@@ -142,51 +144,45 @@
 		document.getElementById('add-cont').style.display="none";
 		document.getElementById('edit-cont').style.display="block";
 		document.getElementById('add-edit-head').textContent = "EDIT CONTACT";
-
 		contactId=$(this).data('id');	
 		contThumb.show();
-		console.log(contactId);
 		document.getElementById('hiddenId').value = contactId;
-
 		if($("#error-data li").length > 0){
 			$('#error-data li').remove();
 		}
-		
 		$.ajax({
-			url:'Components/main.cfc?method=getData',
+			url:'/Frame_work_1_Address_Book/index.cfm?action=addressbook.getContactDetails',
 			type:'POST',
 			data:{
 				id:contactId
 			},
 			success:function(response){
 				console.log(response);
-				const data= JSON.parse(response);
-				console.log(data);
-				let public = data.public;
+				let public = response.public;
 				if(public){
 					publicContact.checked=true;
 				}
 				else{
 					publicContact.checked=false;
 				}
-				const hobbies=	data.hobby_Id.split(",");
-				let date = new Date(data.dob);
+				const hobbies=	response.hobby_Id.split(",");
+				let date = new Date(response.dob);
 				let formattedDate = date.toISOString().split('T')[0];
-				contTitle.val(data.titleId);
-				contFirstname.val(data.firstName);
-				contLastname.val(data.lastName);
-				contGender.val(data.genderId);
+				contTitle.val(response.titleId);
+				contFirstname.val(response.firstName);
+				contLastname.val(response.lastName);
+				contGender.val(response.genderId);
 				contDob.val(formattedDate);
-				contEmail.val(data.email);
-				contPhone.val(data.phone);
-				contAddress.val(data.address);
-				contPincode.val(data.pincode);
-				contStreet.val(data.street);			
+				contEmail.val(response.email);
+				contPhone.val(response.phone);
+				contAddress.val(response.address);
+				contPincode.val(response.pincode);
+				contStreet.val(response.street);			
 				contHobby.val(hobbies);	
 
 				document.getElementById('contactThumb').innerHTML='';
 				const imgElement= document.createElement('img');
-				imgElement.src= `./Uploads/${data.imagePath}`;
+				imgElement.src= `/uploadImg/${response.imagePath}`;
 				imgElement.setAttribute('width','50') ;
 				imgElement.setAttribute('height','50') ;	
 				document.getElementById('contactThumb').appendChild(imgElement);
@@ -199,24 +195,22 @@
 
 	});
 	$('#upload-img').on('change', function(event) {
-			const file = event.target.files[0];
+		const file = event.target.files[0];
+		if (file) {
+			const reader = new FileReader();
+			reader.onload = function(e) {
+								const imgElement = document.createElement('img');
+								imgElement.src = e.target.result;
+								imgElement.alt = 'Uploaded Image';
+								imgElement.style.width = '65px';
+								imgElement.style.height = '65px';
 
-			if (file) {
-					const reader = new FileReader();
-					reader.onload = function(e) {
-										const imgElement = document.createElement('img');
-										imgElement.src = e.target.result;
-										imgElement.alt = 'Uploaded Image';
-										imgElement.style.width = '65px';
-										imgElement.style.height = '65px';
-
-										const contactDiv = document.getElementById('contactThumb');
-										contactDiv.innerHTML = ''; 
-										contactDiv.appendChild(imgElement); 
-							};	
-
-					reader.readAsDataURL(file); 
-				}
+								const contactDiv = document.getElementById('contactThumb');
+								contactDiv.innerHTML = ''; 
+								contactDiv.appendChild(imgElement); 
+					};	
+			reader.readAsDataURL(file); 
+		}
 	});
 
 	/*
@@ -270,41 +264,33 @@
 	*/
 
 	//DELETE CONTACT
-		$('.delete-contact-details').on('click', function() {		
+	$('.delete-contact-details').on('click', function() {		
 		// Get the contact ID from data-id attribute
 		contactId = $(this).data('id');
 		$('.modal-backdrop').show();
 	});
 	$('#delete-cont').on('click',function(){
 		$.ajax({
-			url:'Components/main.cfc?method=deleteCont',
+			url:'/Frame_work_1_Address_Book/index.cfm?action=addressbook.deleteContact',
 			type:'POST',
 			data:{
 				id:contactId
 			},
 			success:function(response){
-				let data=JSON.parse(response);
-				if( data === "Success"){					
+				if(response === "Success"){					
 					$('button.delete-contact-details[data-id="' + contactId + '"]').closest('tr').remove();
-					alert("contact deleted successfully");
-					
+					alert("contact deleted successfully");	
 				}
 				else{
 					console.log("error;;");
 				}
-				
 			},
 			error:function(){
 				console.log("Request failed");
 			}
-		});
-		
+		});	
 		$('#deleteContact').hide();
 		$('.modal-backdrop').hide();
-
 	});	
-
-
-
-	});
+});
 

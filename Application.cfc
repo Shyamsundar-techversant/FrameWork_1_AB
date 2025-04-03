@@ -11,7 +11,8 @@ component extends="framework.one" {
     public function onApplicationStart() {
         var result =  super.onApplicationStart();
         // application.helloService = new model.services.hello();
-        application.imageSavePath = "C:\ColdFusion2021\cfusion\wwwroot\uploadImg"
+        application.imageSavePath = "C:\ColdFusion2021\cfusion\wwwroot\uploadImg";
+        application.datasource = "coldfusion";
         return true;
     }
 
