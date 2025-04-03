@@ -138,27 +138,51 @@ component accessors = "true"{
         } 
 
         // IMAGE
-        local.maxSize = 5*1024*1024 ;
-        local.allowedExtensions = "jpeg,jpg,png,gif" ;
-        local.uploadedImage = fileUpload(
-            destination = application.imageSavePath,
-            fileField = "file",
-            onConflict = "makeunique"
-        );
-        if(local.uploadedImage.FILESIZE > local.maxSize ){
-            arrayAppend(local.errors,"*Image size should be less than 5 MB");
+        if(structKeyExists(rc, 'file')){
+            local.maxSize = 5*1024*1024 ;
+            local.allowedExtensions = "jpeg,jpg,png,gif" ;
+            local.uploadedImage = fileUpload(
+                destination = application.imageSavePath,
+                fileField = "file",
+                onConflict = "makeunique"
+            );
+            if(local.uploadedImage.FILESIZE > local.maxSize ){
+                arrayAppend(local.errors,"*Image size should be less than 5 MB");
+            }
+            else if(!ListFindNoCase(local.allowedExtensions,"#local.uploadedImage.CLIENTFILEEXT#")){
+                arrayAppend(local.errors,"*Image should be jpeg,png or gif format");
+            }
+            rc.imagePath = local.uploadedImage.SERVERFILE;
         }
-        else if(!ListFindNoCase(local.allowedExtensions,"#local.uploadedImage.CLIENTFILEEXT#")){
-            arrayAppend(local.errors,"*Image should be jpeg,png or gif format");
-        }
-        rc.imagePath = local.uploadedImage.SERVERFILE;
-
+        // ADD OR EDIT FUNCTION CALL
         if(arrayLen(local.errors) > 0){
             variables.fw.renderData().data(local.errors).type("json");
         }
         else{
             if(structKeyExists(rc, 'id')){
-
+                if(!structKeyExists(rc, 'file')){
+                    rc.imagePath = '';
+                }
+                else{
+                    rc.imagePath = local.uploadedImage.SERVERFILE;
+                }
+                local.editContact = addressbookService.addEditContact(
+                    title = rc.title,
+                    firstname = rc.firstname,
+                    lastname = rc.lastname,
+                    gender = rc.gender,
+                    dob = rc.dob,
+                    email = rc.email,
+                    phone = rc.phone,
+                    address = rc.address,
+                    street = rc.street,
+                    pincode = rc.pincode,
+                    hobbies = rc.hobbies,
+                    public = rc.public,
+                    id = rc.id,
+                    imagePath = rc.imagePath
+                );
+                variables.fw.renderData().data( local.editContact ).type("json");
             }
             else{
                 local.addContact = addressbookService.addEditContact(

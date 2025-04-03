@@ -1,10 +1,8 @@
-
-
 <cfcomponent>
     <!--- GET TITLE--->
     <cffunction name = "getTitle" access = "public" returntype = "query">
         <cftry>
-            <cfquery name = "local.qryGetTitleValues" datasource  =  "#application.datasource#">
+            <cfquery name = "local.qryGetTitleValues" datasource = "#application.datasource#">
                 SELECT 
                     id,
                     titles
@@ -15,13 +13,13 @@
                 <cfreturn local.qryGetTitleValues>
             </cfif>
         <cfcatch>
-            <cfdump var  =  "#cfcatch#">
+            <cfdump var = "#cfcatch#">
         </cfcatch>
         </cftry>	
     </cffunction>
 
     <!--- GET GENDER --->
-    <cffunction name  =  "getGender" access  =  "public" returntype  =  "query">
+    <cffunction name = "getGender" access  =  "public" returntype  =  "query">
         <cftry>
             <cfquery name  =  "local.qryGetGenderValues" datasource  =  "#application.datasource#">
                 SELECT 
@@ -65,15 +63,15 @@
         <cfargument name  =  "firstname" type  =  "string" required  =  "true">
         <cfargument name  =  "lastname" type  =  "string" required  =  "true">
         <cfargument name  =  "gender" type  =  "string" required  =  "true">
-        <cfargument name  =  "dob" type  =  "date" required  =  "true">
-        <cfargument name  =  "imagePath" type  =  "string" required  =  "false">
-        <cfargument name  =  "email" type  =  "string" required  =  "true">
-        <cfargument name  =  "phone" type  =  "string" required  =  "true">
-        <cfargument name  =  "address" type  =  "string" required  =  "true">
-        <cfargument name  =  "street" type  =  "string" required  =  "true">
-        <cfargument name  =  "pincode" type  =  "string" required  =  "true">
-        <cfargument name  =  "hobbies" type  =  "string" required  =  "true">
-        <cfargument name  =  "id" type  =  "string" required  =  "false">
+        <cfargument name  =  "dob" type  =  "date" required = "true">
+        <cfargument name  =  "imagePath" type  =  "string" required = "false">
+        <cfargument name  =  "email" type  =  "string" required = "true">
+        <cfargument name  =  "phone" type  =  "string" required = "true">
+        <cfargument name  =  "address" type  =  "string" required = "true">
+        <cfargument name  =  "street" type  =  "string" required = "true">
+        <cfargument name  =  "pincode" type  =  "string" required = "true">
+        <cfargument name  =  "hobbies" type  =  "string" required = "true">
+        <cfargument name  =  "id"   type = "numeric" required = "false">
         <cfargument name  =  "public" type  =  "numeric" required  =  "true">	
         <cftry>
             <cfif NOT structKeyExists(arguments,"id") OR arguments.id EQ "">
@@ -123,22 +121,22 @@
                             <cfqueryparam value  =  "#hobby_id#" cfsqltype  =  "cf_sql_integer">
                         )
                     </cfquery>
-                </cfloop>
-                
-    <!--- <cfelse>	
-                <cfset local.decryptedId = decrypt(arguments.id,application.encryptionKey,"AES","Hex")>
-                <cfset local.hobbyArr = ListToArray(arguments.hobbies,",")>
-        
-                 UPDATE CONTACTS 	
-                <cfquery name = "local.editCont" datasource = "#application.datasource#">
-                    UPDATE contacts
+                </cfloop>           
+            <cfelse>	
+                <cfset local.hobbyArr = ListToArray(arguments.hobbies,",")>     
+                 <!--- UPDATE CONTACTS 	--->
+                <cfquery name = "local.qryEditContact" datasource = "#application.datasource#">
+                    UPDATE 
+                        contacts
                     SET 
                         titleId = <cfqueryparam value = "#arguments.title#" cfsqltype = "cf_sql_integer">,
                         firstName = <cfqueryparam value = "#arguments.firstname#" cfsqltype = "cf_sql_varchar">,
                         lastName = <cfqueryparam value = "#arguments.lastname#" cfsqltype = "cf_sql_varchar">,
                         genderId = <cfqueryparam value = "#arguments.gender#" cfsqltype = "cf_sql_varchar">,
                         dob = <cfqueryparam value = "#arguments.dob#" cfsqltype = "cf_sql_date">,
-                        imagePath = <cfqueryparam value = "#arguments.uploadImg#" cfsqltype = "cf_sql_varchar">,
+                        <cfif len(arguments.imagePath)>
+                            imagePath = <cfqueryparam value = "#arguments.imagePath#" cfsqltype = "cf_sql_varchar">,
+                        </cfif>
                         address = <cfqueryparam value = "#arguments.address#" cfsqltype = "cf_sql_varchar">,
                         street = <cfqueryparam value = "#arguments.street#" cfsqltype = "cf_sql_varchar">,
                         pincode = <cfqueryparam value = "#arguments.pincode#" cfsqltype = "cf_sql_integer">,
@@ -146,22 +144,22 @@
                         phone = <cfqueryparam value = "#arguments.phone#" cfsqltype = "cf_sql_bigint">,
                         public = <cfqueryparam value = "#arguments.public#" cfsqltype = "cf_sql_integer">
                     WHERE
-                        id = <cfqueryparam value = "#local.decryptedId#" cfsqltype = "cf_sql_integer">
+                        id = <cfqueryparam value = "#arguments.id#" cfsqltype = "cf_sql_integer">
                     AND
                         userId = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
                 </cfquery>
                 
                 <!--- UPDATE CONTACT_HOBBIES --->
-                <cfquery datasource = "#application.datasource#" name = "local.existingHobbies">
+                <cfquery datasource = "#application.datasource#" name = "local.qryGetExistingHobbies">
                     SELECT
                         hobby_id
                     FROM 
                         contact_hobbies
                     WHERE 
-                        contact_id = <cfqueryparam value = "#local.decryptedId#" cfsqltype = "cf_sql_integer">
+                        contact_id = <cfqueryparam value = "#arguments.id#" cfsqltype = "cf_sql_integer">
                 </cfquery> 
 
-                <cfset local.existingHobbiesArray  =  listToArray(valueList(local.existingHobbies.hobby_id))>
+                <cfset local.existingHobbiesArray  =  listToArray(valueList(local.qryGetExistingHobbies.hobby_id))>
                             
                 <cfset local.newHobbies = arguments.hobbies>
                 <cfset local.newHobbiesArray = ListToArray(local.newHobbies,",")>
@@ -173,7 +171,7 @@
                     </cfif>
                 </cfloop>
 
-                <cfquery datasource = "#application.datasource#" result = "local.deleteContactHobbies">
+                <cfquery datasource = "#application.datasource#" result = "local.qryDeleteContactHobbies">
                     DELETE 
                     FROM 
                         contact_hobbies
@@ -181,11 +179,11 @@
                         hobby_id 
                     NOT IN(<cfqueryparam value = "#arguments.hobbies#" cfsqltype = "cf_sql_varchar" list = "true">)
                     AND
-                        contact_id = <cfqueryparam value = "#local.decryptedId#" cfsqltype = "cf_sql_integer">	
+                        contact_id = <cfqueryparam value = "#arguments.id#" cfsqltype = "cf_sql_integer">	
                 </cfquery>
             
                 <cfif arrayLen(local.newHobbiesToInsert) GT 0 >
-                    <cfquery datasource = "#application.datasource#" name = "local.addNewHobbies">
+                    <cfquery datasource = "#application.datasource#" name = "local.qryAddNewHobbies">
                         INSERT INTO
                             contact_hobbies(
                                         contact_id,
@@ -194,7 +192,7 @@
                         VALUES
                             <cfloop array = "#local.newHobbiesToInsert#" index  =  "local.i" item = "local.hobby"  >
                                 (
-                                    <cfqueryparam value = "#local.decryptedId#" cfsqltype = "cf_sql_integer">,
+                                    <cfqueryparam value = "#arguments.id#" cfsqltype = "cf_sql_integer">,
                                     <cfqueryparam value = "#local.hobby#" cfsqltype = "cf_sql_integer">
                                 )
                                 <cfif local.i LT arrayLen(local.newHobbiesToInsert)>
@@ -202,7 +200,7 @@
                                 </cfif>
                             </cfloop>;
                     </cfquery>
-                </cfif>	--->						
+                </cfif>				
             </cfif>
             <cfset local.result = "Success">	
             <cfreturn local.result>	
@@ -317,7 +315,7 @@
                     userId  =  <cfqueryparam value  =  "#session.userId#" cfsqltype  =  "cf_sql_integer">
                 <cfif structKeyExists(arguments,"id") AND len(arguments.id) NEQ 0>
                     AND 
-                        id ! =  <cfqueryparam value  =  "#arguments.id#" cfsqltype = "cf_sql_integer">
+                        id != <cfqueryparam value  =  "#arguments.id#" cfsqltype = "cf_sql_integer">
                 </cfif>
             </cfquery>
             <cfreturn local.qryGetContactEmail>

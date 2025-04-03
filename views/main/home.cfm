@@ -1,107 +1,19 @@
-<cfset variables.title  =  "">
-<cfset variables.firstname  =  "">
-<cfset variables.lastname  =  "">
 <cfset variables.gender  =  "">
-<cfset variables.dob  =  "">
-<cfset variables.photo  =  "">
-<cfset variables.email  =  "">
-<cfset variables.phone  =  "">
-<cfset  variables.address  =  "">
-<cfset variables.street  =  "">
-<cfset variables.pincode  =  "">
 <cfset variables.hobbies  =  "">
+<cfset variables.title = "">
 
-<cfif structKeyExists(form,"submit")>
-    <cfif structKeyExists(form,"public")>
-        <cfset form.public = 1>
-    <cfelse>
-        <cfset form.public = 0>
-    </cfif>
-    <cfif NOT  structKeyExists(form,"hobby")>
-        <cfset form.hobby = "">
-    </cfif>
-    <cfset variables.addContact  =  application.dbObj.validateFormAndCreateOrUpdateUser(
-                        title = form.title,
-                        firstname = form.firstname,
-                        lastname = form.lastname,
-                        gender = form.gender,
-                        dob = form.dob,
-                        formFile = form.uploadImg,
-                        email = form.email,
-                        phone = form.phone,
-                        address = form.address,
-                        street = form.street,
-                        pincode = form.pincode,
-                        hobbies = form.hobby,
-                        public = form.public,
-                        id  =  form.id
-                                                
-                    )
-    >
-    <cfif arrayLen(variables.addContact) GT 0>
-        <cfset variables.title = form.title>
-        <cfset variables.firstname  =  form.firstname>
-        <cfset variables.lastname  =  form.lastname>
-        <cfset variables.gender  =  form.gender>		
-        <cfset variables.dob  =  form.dob>
-        <cfset variables.email  =  form.email>
-        <cfset variables.phone  =  form.phone>
-        <cfset variables.address  =  form.address>
-        <cfset variables.street  =  form.street>
-        <cfset variables.pincode  =  form.pincode>
-        <cfset variables.hobbies  =  form.hobby>	
-    </cfif>
-</cfif>
 
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset = "UTF-8">
-        <meta name = "viewport" content = "width = device-width, initial-scale = 1.0">
-        <title>Address Book</title>
-        <link rel  =  "stylesheet" href = "/Frame_work_1_Address_Book/assets/css/style.css"/>
-        <link rel  =  "stylesheet" href = "/Frame_work_1_Address_Book/assets/css/bootstrap.css"/>
-        <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" 
-            integrity = "sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg =  = " 
-            crossorigin = "anonymous" 
-            referrerpolicy = "no-referrer"/>	
-    </head>
-    <body>
-        <section class = "reg-page  no-print">
-            <header class = "header">
-                <div class = "container">
-                    <nav class = "navigation">
-                        <div class = "logo">
-                            <i class = "fa-solid fa-address-book"></i>
-                            ADDRESS BOOK	
-                        </div>
-                        <div class = "reg-buttons">
-                            <button class = "btn sign-up">
-                                <a href = "logIn.cfm?logOut = 1">
-                                    <i class = "fa-solid fa-arrow-left"></i>LogOut
-                                </a>
-                            </button>
-                        </div>
-                    </nav>
-                </div>			
-            </header>
-        </section>
         <section class = "user-details">
-            <div class = "container">
-                <div class = "user-options  no-print">
-                    <div class = "options">
-                        <button media = "print" onclick = "window.print();" >PRINT</button>
-                        <button onclick = "window.location.href = 'pdf.cfm';">PDF</button>
-                    </div>
-                </div>
-            </div>
             <div class = "container">             
                 <div class = "users">
                     <div class = "create-profile">
                         <div class = "user-img-logo">
                             <i class = "fa-solid fa-user"></i>
                         </div>
-                        <cfoutput><h4>#session.userName#</h4></cfoutput>
+                        <cfif structKeyExists(session, 'userId')>
+                            <cfoutput><h4>#session.userName#</h4></cfoutput>
+                        </cfif>
+                        
                         <button type = "button" class = "btn btn-primary user-creation"  id = "create-cont"
                             data-bs-toggle = "modal" data-bs-target = "#staticBackdrop"	
                         >
@@ -236,11 +148,11 @@
                                             </div>
                                             <div class = "col">
                                                 <label for = "firstname" class = "form-label">Firstname : </label>
-                                                <input type = "text" class = "form-control" id = "firstname" name = "firstname" value = "<cfoutput>#variables.firstname#</cfoutput>">
+                                                <input type = "text" class = "form-control" id = "firstname" name = "firstname" >
                                             </div>
                                             <div class = "col">
                                                 <label for = "lastname" class = "form-label">Lastname : </label>
-                                                <input type = "text" class = "form-control" id = "lastname" name = "lastname" value = "<cfoutput>#variables.lastname#</cfoutput>">
+                                                <input type = "text" class = "form-control" id = "lastname" name = "lastname" >
                                             </div>
                                         </div>
                                         <div class = "row mb-3">
@@ -266,8 +178,7 @@
                                             </div>
                                             <div class = "col">
                                                 <label for = "dob" class = "form-label">Date Of Birth</label>
-                                                <input type = "date" class = "form-control" id = "dob" name = "dob" 
-                                                    value = "<cfoutput>#variables.dob#</cfoutput>"
+                                                <input type = "date" class = "form-control" id = "dob" name = "dob"   
                                                 >
                                             </div>
                                         </div>
@@ -291,11 +202,11 @@
                                         <div class = "row mb-3">
                                             <div class = "col">
                                                 <label for = "email" class = "form-label">Email</label>
-                                                <input type = "email" class = "form-control" id = "email" name = "email" value = "<cfoutput>#variables.email#</cfoutput>">
+                                                <input type = "email" class = "form-control" id = "email" name = "email">
                                             </div>
                                             <div class = "col">
                                                 <label for = "phone" class = "form-label">Phone</label>
-                                                <input type = "tel" class = "form-control" id = "phone" name = "phone" maxlength = "10" value = "<cfoutput>#variables.phone#</cfoutput>"
+                                                <input type = "tel" class = "form-control" id = "phone" name = "phone" maxlength = "10"
                                             >
                                             </div>
                                         </div>
@@ -303,19 +214,18 @@
                                             <div class = "col">
                                                 <label for = "address" class = "form-label">Address</label>
                                                 <textarea class = "form-control" id = "address" name = "address" rows = "4" cols = "7" >
-                                                    <cfoutput>#variables.address#</cfoutput>	
                                                 </textarea>
                                             </div>
                                         </div>
                                         <div class = "row mb-3">
                                             <div class = "col">
                                                 <label for = "street" class = "form-label">Street</label>
-                                                <input type = "text" class = "form-control" id = "street" name = "street" value = "<cfoutput>#variables.street#</cfoutput>"
+                                                <input type = "text" class = "form-control" id = "street" name = "street"
                                                 >
                                             </div>
                                             <div class = "col">
                                                 <label for = "pincode" class = "form-label">Pincode</label>
-                                                <input type = "text" class = "form-control" id = "pincode" name = "pincode" value = "<cfoutput>#variables.pincode#</cfoutput>"
+                                                <input type = "text" class = "form-control" id = "pincode" name = "pincode"
                                                 >
                                             </div>
                                         </div>

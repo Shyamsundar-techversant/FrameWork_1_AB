@@ -7,7 +7,7 @@ component {
     }
 
     //CHECK USER EXISTS
-    public query function userLogIn(required string userName) {
+    public query function getUserData(required string userName) {
         try {
             local.userLog = queryExecute(
                 sql = "
@@ -29,9 +29,7 @@ component {
             return local.userLog;
         }
         catch(any e) {
-            // Log error securely instead of dumping to screen
             writeLog(type="Error", file="loginErrors", text=serializeJSON(e));
-            // Return empty query instead of string for consistent return type
             return queryNew("userName,userId,password,salt");
         }
     }

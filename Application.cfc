@@ -3,14 +3,8 @@ component extends="framework.one" {
     this.applicationTimeout = createTimeSpan(0, 1, 0, 0);
     this.sessionManagement = true;
 
-    public void function setupApplication() {
-        // application.addressbookService = new model.services.hello();
-        
-    }
-
     public function onApplicationStart() {
         var result =  super.onApplicationStart();
-        // application.helloService = new model.services.hello();
         application.imageSavePath = "C:\ColdFusion2021\cfusion\wwwroot\uploadImg";
         application.datasource = "coldfusion";
         return true;
@@ -30,8 +24,7 @@ component extends="framework.one" {
 
     public function onRequestStart(targetPath) {
         var result =  super.onRequestStart(targetPath);
-        // request.mainController = new controllers.main();
-        // request.mainController.setHelloService(application.helloService);
+        controller('security.checkAuthorization');
         return true;
     }
 
